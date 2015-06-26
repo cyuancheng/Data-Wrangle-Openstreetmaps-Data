@@ -1,0 +1,394 @@
+<!DOCTYPE html><html>
+
+<head>
+<meta charset="utf-8">
+<title>ProjectSummary</title>
+<style type="text/css">
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+</head>
+<body>
+<h4 id="toc_0">Project 2: Analyzing OpenStreetMap Data | Data Wrangling with MongoDB</h4>
+
+<ul>
+<li>Author:  Chi-Yuan Cheng (cyuancheng AT gmail DOT com) </li>
+<li>Last updated: May 1th  2015</li>
+</ul>
+
+<h5 id="toc_1">Map information:</h5>
+
+<ul>
+<li>Map Area: Santa Barbara County, CA, United States</li>
+<li>The dataset can be found <a href="https://s3.amazonaws.com/metro-extracts.mapzen.com/santa-barbara_california.osm.bz2">here</a> </li>
+<li>I choose Santa Barbara, CA because I have lived and worked there for 6 years.</li>
+</ul>
+
+<h5 id="toc_2">Questions:</h5>
+
+<h5 id="toc_3">1. Problems encountered in your map</h5>
+
+<ul>
+<li><p><strong>Obtaining the OSM data:</strong></p>
+
+<p>I have a problem downloading the OSM file from the OpenStreetMap website. As suggesting by the project instruction, I downloaded the OSM file from Map Zen. </p></li>
+<li><p><strong>Understanding data structure:</strong> </p>
+
+<p>One challenge was to understand the context and structure of the OSM data. We can use Python ElementTree to parse the data. We can also use UNIX &quot;grep&quot; comment to read the data. </p></li>
+<li><p><strong>Loading json data into MongoDB:</strong> </p>
+
+<p>I have a problem importing the json data into MongoDB using pymongo. I found it is faster and easier to import json data using &quot;mongoimport&quot;, and query a collection in the mongo shell. </p></li>
+<li><p><strong>Data cleaning:</strong></p>
+
+<p>Several street names have no street types and also some other errors. The uncorrected and corrected street names are in the &quot;changes&quot; and &quot;skip&quot; dictionaries in this <a href="OpenstreetMapData-SB.html">document</a>. I manually changed these errors in &quot;shape_element&quot; function.  I also changed many similar street types to a non-abbreviated form after discovering these issues in the audit. The corrections are in this <a href="OpenstreetMapData-SB.html">document</a>. </p>
+
+<p>Additionally, I fount there are several inconsistent labeling elements of amenities when querying. For example, &quot;Starbucks&quot; vs &quot;Starbucks Coffee&quot; and &quot;In-N-Out&quot; vs &quot;In-N-Out Burger&quot;. I corrected these inconsistent names using MongoDB, as following.</p>
+
+<pre><code>    db.sb.update({&#39;name&#39;:&quot;Starbucks&quot;}, 
+        {&quot;$set&quot;:{&quot;name&quot; : &quot;Starbucks Coffee&quot;}},{multi:true})</code></pre>
+
+<p>before:   { &quot;_id&quot; : &quot;Starbucks Coffee&quot;, &quot;count&quot; : 6 }</p>
+
+<p>after:     { &quot;_id&quot; : &quot;Starbucks Coffee&quot;, &quot;count&quot; : 15 }</p></li>
+</ul>
+
+<h5 id="toc_4">2. Overview of the data</h5>
+
+<ul>
+<li><p>File sizes:</p>
+
+<pre><code>  OSM file is about 175 MB  
+  JSON file is about 198 MB</code></pre></li>
+<li><p>Datasize:</p>
+
+<pre><code>&gt; db.sb.dataSize()
+2066303408</code></pre></li>
+<li><p>Number of document:</p>
+
+<pre><code>&gt; db.sb.find().count()
+7424821</code></pre></li>
+<li><p>Number of node:</p>
+
+<pre><code>&gt; db.sb.find({&quot;type&quot;:&quot;node&quot;}).count()
+7136237</code></pre></li>
+<li><p>Number of way:</p>
+
+<pre><code>&gt; db.sb.find({&quot;type&quot;:&quot;way&quot;}).count()
+284368</code></pre></li>
+<li><p>Number of created users</p>
+
+<pre><code>&gt; db.sb.distinct(&quot;created.user&quot;).length
+438</code></pre></li>
+<li><p>Number of cafes</p>
+
+<pre><code>&gt; db.sb.find({&quot;amenity&quot;:&quot;cafe&quot;}).count()
+350</code></pre></li>
+<li><p>Number of shops </p>
+
+<pre><code>&gt; db.sb.find({&quot;shop&quot;:{$exists:1}}).count()
+2157</code></pre></li>
+</ul>
+
+<h5 id="toc_5">3. Other ideas about the datasets</h5>
+
+<ul>
+<li><p>The top 5 contributed users</p>
+
+<pre><code>&gt;db.sb.aggregate([
+        {&#39;$match&#39;: {&#39;created.user&#39;:{&#39;$exists&#39;:1}}},
+        {&#39;$group&#39;: {&#39;_id&#39;:&#39;$created.user&#39;,
+                    &#39;count&#39;:{&#39;$sum&#39;:1}}},
+        {&#39;$sort&#39;: {&#39;count&#39;:-1}},
+        {&#39;$limit&#39; : 5}])
+
+{ &quot;_id&quot; : &quot;woodpeck_fixbot&quot;, &quot;count&quot; : 2694493 }
+{ &quot;_id&quot; : &quot;nmixter&quot;, &quot;count&quot; : 837826 }
+{ &quot;_id&quot; : &quot;Apo42&quot;, &quot;count&quot; : 542586 }
+{ &quot;_id&quot; : &quot;Eureka gold&quot;, &quot;count&quot; : 347793 }
+{ &quot;_id&quot; : &quot;USWilderness&quot;, &quot;count&quot; : 331834 }</code></pre></li>
+<li><p>The top 5 popular cuisines</p>
+
+<pre><code>&gt; db.sb.aggregate( [
+        {&#39;$match&#39;: {&#39;amenity&#39;:&#39;restaurant&#39;,
+                    &#39;cuisine&#39;:{&#39;$exists&#39;:1}}},
+        {&quot;$group&quot;:{&quot;_id&quot;:&quot;$cuisine&quot;, 
+                    &quot;count&quot;:{&quot;$sum&quot;:1}}},
+        {&quot;$sort&quot;:{&quot;count&quot;:-1}}, 
+        {&quot;$limit&quot;:5}])
+
+{ &quot;_id&quot; : &quot;american&quot;, &quot;count&quot; : 85 }
+{ &quot;_id&quot; : &quot;mexican&quot;, &quot;count&quot; : 56 }
+{ &quot;_id&quot; : &quot;pizza&quot;, &quot;count&quot; : 46 }
+{ &quot;_id&quot; : &quot;seafood&quot;, &quot;count&quot; : 39 }
+{ &quot;_id&quot; : &quot;burger&quot;, &quot;count&quot; : 37 }</code></pre></li>
+<li><p>The top 5 popular schools</p>
+
+<pre><code>&gt; db.sb.aggregate([
+        {&quot;$match&quot;:{&quot;amenity&quot;:&quot;school&quot;,
+                   &quot;name&quot;:{&quot;$exists&quot;:1}}},
+        {&quot;$group&quot;:{&quot;_id&quot;:&quot;$name&quot;, 
+                    &quot;count&quot;:{&quot;$sum&quot;:1}}},
+        {&quot;$sort&quot;:{&quot;count&quot;:-1}}, 
+        {&quot;$limit&quot;:5}] )       
+
+{ &quot;_id&quot; : &quot;Lemonwood Elementary&quot;, &quot;count&quot; : 32 }
+{ &quot;_id&quot; : &quot;Isla Vista Elementary School&quot;, &quot;count&quot; : 22 }
+{ &quot;_id&quot; : &quot;Oxnard High School&quot;, &quot;count&quot; : 16 }
+{ &quot;_id&quot; : &quot;Santa Barbara College&quot;, &quot;count&quot; : 16 }
+{ &quot;_id&quot; : &quot;Wilson School&quot;, &quot;count&quot; : 16 }
+</code></pre></li>
+<li><p>The top 5 appearing amenities</p>
+
+<pre><code>&gt; db.sb.aggregate([
+        {&quot;$match&quot;:{&quot;amenity&quot;:{&quot;$exists&quot;:1}}}, 
+        {&quot;$group&quot;: {&quot;_id&quot;:&quot;$amenity&quot;,
+                    &quot;count&quot;:{&quot;$sum&quot;:1}}}, 
+        {&quot;$sort&quot;:{&quot;count&quot;:-1}}, 
+        {&quot;$limit&quot;:5}])
+
+{ &quot;_id&quot; : &quot;parking&quot;, &quot;count&quot; : 3071 }
+{ &quot;_id&quot; : &quot;school&quot;, &quot;count&quot; : 2507 }
+{ &quot;_id&quot; : &quot;place_of_worship&quot;, &quot;count&quot; : 2459 }
+{ &quot;_id&quot; : &quot;restaurant&quot;, &quot;count&quot; : 856 }
+{ &quot;_id&quot; : &quot;telephone&quot;, &quot;count&quot; : 760 }
+</code></pre></li>
+<li><p>The top 5 popular fast food</p>
+
+<pre><code>&gt; db.sb.aggregate([
+    {&#39;$match&#39;: {&#39;amenity&#39;:&#39;fast_food&#39;,
+                &#39;name&#39;:{&#39;$exists&#39;:1}}},
+    {&quot;$group&quot;:{&quot;_id&quot;:&quot;$name&quot;, 
+                &quot;count&quot;:{&quot;$sum&quot;:1}}},
+    {&quot;$sort&quot;:{&quot;count&quot;:-1}}, 
+    {&quot;$limit&quot;:5}])
+
+{ &quot;_id&quot; : &quot;McDonald&#39;s&quot;, &quot;count&quot; : 70 }
+{ &quot;_id&quot; : &quot;Subway&quot;, &quot;count&quot; : 56 }
+{ &quot;_id&quot; : &quot;Panda Express&quot;, &quot;count&quot; : 39 }
+{ &quot;_id&quot; : &quot;Wendy&#39;s&quot;, &quot;count&quot; : 31 }
+{ &quot;_id&quot; : &quot;Jack in the Box&quot;, &quot;count&quot; : 24 }</code></pre></li>
+<li><p><strong>Other Idea:</strong></p>
+
+<p><strong><em>1. The most  populated district in Santa Barbara County</em></strong></p>
+
+<p>I want to know the most populated district in Santa Barrage County, so I did the following MongoDB query based on postcode.</p>
+
+<pre><code>&gt; db.sb.aggregate( [
+    { &#39;$match&#39; : { &#39;address.postcode&#39; : {&#39;$exists&#39; : 1}}},
+    { &#39;$project&#39; : {&#39;postcode&#39; : 
+                    { &#39;$substr&#39; : [&#39;$address.postcode&#39;, 0, 5]}}}, 
+    { &#39;$group&#39; : {&#39;_id&#39; : &#39;$postcode&#39;,  
+                 &#39;count&#39; : { &#39;$sum&#39; : 1 }}}, 
+    { &#39;$sort&#39; : {&#39;count&#39; : -1}},
+                { &#39;$limit&#39; : 5} ] )
+
+{ &quot;_id&quot; : &quot;93117&quot;, &quot;count&quot; : 545 }
+{ &quot;_id&quot; : &quot;93436&quot;, &quot;count&quot; : 428 }
+{ &quot;_id&quot; : &quot;93101&quot;, &quot;count&quot; : 333 }
+{ &quot;_id&quot; : &quot;93001&quot;, &quot;count&quot; : 207 }
+{ &quot;_id&quot; : &quot;93033&quot;, &quot;count&quot; : 109 }</code></pre>
+
+<p>The most populated district is 93117, which is Goleta city. I live in this area.</p>
+
+<p><strong><em>2. Wheelchair accessible amenities in Santa Barbara County.</em></strong></p>
+
+<p>I want to know which amenities are wheelchair accessible.</p>
+
+<pre><code>&gt; db.sb.aggregate([
+    { &#39;$match&#39; :{&#39;amenity&#39; : {&#39;$exists&#39; : 1},
+                 &#39;wheelchair&#39; : &#39;yes&#39;}},  
+    { &#39;$group&#39; : { &#39;_id&#39; :  &#39;$amenity&#39; ,                         
+                   &#39;count&#39; : { &#39;$sum&#39; : 1 }}}, 
+    { &#39;$sort&#39; : {&#39;count&#39; : -1}},
+    {&#39;$limit&#39; : 5}])
+
+{ &quot;_id&quot; : &quot;fast_food&quot;, &quot;count&quot; : 24 }
+{ &quot;_id&quot; : &quot;toilets&quot;, &quot;count&quot; : 16 }
+{ &quot;_id&quot; : &quot;fuel&quot;, &quot;count&quot; : 16 }
+{ &quot;_id&quot; : &quot;hospital&quot;, &quot;count&quot; : 16 }
+{ &quot;_id&quot; : &quot;restaurant&quot;, &quot;count&quot; : 8 }
+</code></pre>
+
+<p>Fast food is the most wheelchair accessible amenity in Santa Barbara. Next, we can find out which fast food provides wheelchair service.</p>
+
+<pre><code>&gt; db.sb.aggregate([
+    { &#39;$match&#39; :{&#39;amenity&#39; : &#39;fast_food&#39;,
+                 &#39;wheelchair&#39; : &#39;yes&#39;}},  
+    { &#39;$group&#39; : { &#39;_id&#39; :  &#39;$name&#39; ,                         
+                   &#39;count&#39; : { &#39;$sum&#39; : 1 }}}, 
+    { &#39;$sort&#39; : {&#39;count&#39; : -1}},
+    {&#39;$limit&#39; : 5}]) 
+
+{ &quot;_id&quot; : &quot;In-N-Out Burger&quot;, &quot;count&quot; : 16 }
+{ &quot;_id&quot; : &quot;McDonald&#39;s&quot;, &quot;count&quot; : 8 }</code></pre>
+
+<p>Interestingly, only two fast food restaurants provide wheelchair service in Santa Barbara.</p>
+
+<p><strong><em>3. Find the closest hospital from my current location</em></strong></p>
+
+<p>The greatest benefits of OSM data is for disaster preparedness and risk management. For example, OSM can help facilitate the delivery of goods and services in the Nepal earthquake disaster.  A recent <a href="http://abc7.com/weather/simulation-shows-fallout-of-77-magnitude-quake-in-socal/684418/">study</a> suggests that Southern California may have a 7.7 magnitude earthquake in future, so we have to prepare.</p>
+
+<p>In this regard, I used OSM to find the closest hospital from my current location in Santa Barbara area. The code can be find here (<a href="FindHospital.ipynb">ipynb</a>, <a href="FindHospital.html">html</a>). </p></li>
+</ul>
+
+<h5 id="toc_6">Conclusion:</h5>
+
+<p>There are still many opportunities to clean and validate the OSM data in which I did not explore. It would be very helpful if we could update, validate, and/or pull missing information of the OSM data from other sources, such as Google Maps API. </p>
+
+<h5 id="toc_7">Reference:</h5>
+
+<ol>
+<li>https://docs.mongodb.org/manual/</li>
+<li>https://github.com/geopy/geopy</li>
+<li>http://wiki.openstreetmap.org/wiki/2015<em>Nepal</em>earthquake</li>
+</ol>
+
+
+</body>
+
+</html>

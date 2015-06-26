@@ -26,6 +26,8 @@ I used data wrangling techniques, such as assessing the data quality for validit
 - **Extra code** 
 	- a python code to find the closest hospital using OSM data
 	([html](FindHospital.html), [ipynb](FindHospital.ipynb))  
+	
+- **Certification of the course**: ([here](certificate.pdf))
 
 
 

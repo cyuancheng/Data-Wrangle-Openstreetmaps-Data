@@ -8,9 +8,9 @@ I used data wrangling techniques, such as assessing the data quality for validit
 
 ####Files
 
-- **Project summary** ([md](ProjectSummary.md), [html](ProjectSummary.html), [pdf](ProjectSummary.pdf))    
+- **Project summary** ([md](ProjectSummary.md), [html](https://htmlpreview.github.io/?https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/ProjectSummary.html), [pdf](ProjectSummary.pdf))    
  includes answers to questions, MongoDB queries and reference materials
-- **Project report** ([html](OpenstreetMapData-SB.html), [ipynb]
+- **Project report** ([html](https://htmlpreview.github.io/?https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/OpenstreetMapData-SB.html), [ipynb]
 (OpenstreetMapData-SB.ipynb))	
 	includes referenced code for data cleaning
 - **Example OSM file** ([sample_SB.osm](sample_SB.osm))  
@@ -25,7 +25,7 @@ I used data wrangling techniques, such as assessing the data quality for validit
 	
 - **Extra code** 
 	- a python code to find the closest hospital using OSM data
-	([html](FindHospital.html), [ipynb](FindHospital.ipynb))  
+	([ipynb](FindHospital.ipynb))  
 	
 - **Certification of the course**: ([here](certificate.pdf))
 

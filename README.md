@@ -20,7 +20,7 @@ The interesting findings of OSM data in Santa Barbara were listed below:
 
 ###Files
 
-- **Project summary** ([md](ProjectSummary.md), [html](https://htmlpreview.github.io/?https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/ProjectSummary.html))  
+- **Project summary** ([md](ProjectSummary.md), [html](http://cyuancheng.github.io/Data-Wrangle-Openstreetmaps-Data) )    
   includes answers to questions, MongoDB queries and reference materials
 - **Project report** ([ipynb]
 (http://nbviewer.ipython.org/github/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/OpenstreetMapData-SB.ipynb))	

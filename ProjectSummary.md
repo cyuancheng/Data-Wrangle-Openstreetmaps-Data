@@ -1,17 +1,17 @@
-####Project 2: Analyzing OpenStreetMap Data | Data Wrangling with MongoDB
+##Project 2: Analyzing OpenStreetMap Data | Data Wrangling with MongoDB
 - Author:  Chi-Yuan Cheng (cyuancheng AT gmail DOT com) 
 - Last updated: May 1th  2015
 
-#####Map information:
+###Map information:
 
 - Map Area: Santa Barbara County, CA, United States
 - The dataset can be found [here] (https://s3.amazonaws.com/metro-extracts.mapzen.com/santa-barbara_california.osm.bz2) 
 - I choose Santa Barbara, CA because I have lived and worked there for 6 years.
 
 
-#####Questions:
+###Questions:
 
-#####1. Problems encountered in your map
+####1. Problems encountered in your map
 
 - **Obtaining the OSM data:**
 
@@ -25,7 +25,7 @@
 
 - **Data cleaning:**
 
-	Several street names have no street types and also some other errors. The uncorrected and corrected street names are in the "changes" and "skip" dictionaries in this [document] (OpenstreetMapData-SB.html). I manually changed these errors in "shape_element" function.  I also changed many similar street types to a non-abbreviated form after discovering these issues in the audit. The corrections are in this [document] (OpenstreetMapData-SB.html). 
+	Several street names have no street types and also some other errors. The uncorrected and corrected street names are in the "changes" and "skip" dictionaries in this [document] (https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/OpenstreetMapData-SB.ipynb). I manually changed these errors in "shape_element" function.  I also changed many similar street types to a non-abbreviated form after discovering these issues in the audit. The corrections are in this [document] (https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/OpenstreetMapData-SB.ipynb). 
 	
 	Additionally, I fount there are several inconsistent labeling elements of amenities when querying. For example, "Starbucks" vs "Starbucks Coffee" and "In-N-Out" vs "In-N-Out Burger". I corrected these inconsistent names using MongoDB, as following.
 		
@@ -37,7 +37,7 @@
 
 	 after:     { "_id" : "Starbucks Coffee", "count" : 15 }
 
-#####2. Overview of the data
+####2. Overview of the data
 
 - File sizes:
   
@@ -89,7 +89,7 @@
 2157
 	```
 
-#####3. Other ideas about the datasets
+####3. Other ideas about the datasets
 
 - The top 5 contributed users
 
@@ -245,14 +245,14 @@ Interestingly, only two fast food restaurants provide wheelchair service in Sant
 	
 	The greatest benefits of OSM data is for disaster preparedness and risk management. For example, OSM can help facilitate the delivery of goods and services in the Nepal earthquake disaster.  A recent [study](http://abc7.com/weather/simulation-shows-fallout-of-77-magnitude-quake-in-socal/684418/) suggests that Southern California may have a 7.7 magnitude earthquake in future, so we have to prepare.
 	
-	In this regard, I used OSM to find the closest hospital from my current location in Santa Barbara area. The code can be find here ([ipynb] (FindHospital.ipynb), [html] (FindHospital.html)). 
+	In this regard, I used OSM to find the closest hospital from my current location in Santa Barbara area. The code can be find here ([ipynb] (http://nbviewer.ipython.org/github/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/FindHospital.ipynb), [html] (FindHospital.html)). 
 	
 
-#####Conclusion: 
+###Conclusion: 
 
 There are still many opportunities to clean and validate the OSM data in which I did not explore. It would be very helpful if we could update, validate, and/or pull missing information of the OSM data from other sources, such as Google Maps API. 
 
-#####Reference:
+###Reference:
 1. https://docs.mongodb.org/manual/
 2. https://github.com/geopy/geopy
 3. http://wiki.openstreetmap.org/wiki/2015_Nepal_earthquake

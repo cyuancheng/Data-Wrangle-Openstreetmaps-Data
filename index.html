@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Analyzing OpenStreetMap Data with MongoDB by cyuancheng</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Analyzing OpenStreetMap Data with MongoDB</h1>
+      <h2 class="project-tagline">Chi-Yuan Cheng, Udacity Data Analyst Nanodegree</h2>
+      <a href="https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data" class="btn">View on GitHub</a>
+      <a href="https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h2>
+<a id="project-2-analyzing-openstreetmap-data--data-wrangling-with-mongodb" class="anchor" href="#project-2-analyzing-openstreetmap-data--data-wrangling-with-mongodb" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project 2: Analyzing OpenStreetMap Data | Data Wrangling with MongoDB</h2>
+
+<ul>
+<li>Author:  Chi-Yuan Cheng (cyuancheng AT gmail DOT com) </li>
+<li>Last updated: May 1th  2015</li>
+</ul>
+
+<h3>
+<a id="map-information" class="anchor" href="#map-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Map information:</h3>
+
+<ul>
+<li>Map Area: Santa Barbara County, CA, United States</li>
+<li>The dataset can be found <a href="https://s3.amazonaws.com/metro-extracts.mapzen.com/santa-barbara_california.osm.bz2">here</a> </li>
+<li>I choose Santa Barbara, CA because I have lived and worked there for 6 years.</li>
+</ul>
+
+<h3>
+<a id="questions" class="anchor" href="#questions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Questions:</h3>
+
+<h4>
+<a id="1-problems-encountered-in-your-map" class="anchor" href="#1-problems-encountered-in-your-map" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Problems encountered in your map</h4>
+
+<ul>
+<li>
+<p><strong>Obtaining the OSM data:</strong></p>
+
+<p>I have a problem downloading the OSM file from the OpenStreetMap website. As suggesting by the project instruction, I downloaded the OSM file from Map Zen. </p>
+</li>
+<li>
+<p><strong>Understanding data structure:</strong> </p>
+
+<p>One challenge was to understand the context and structure of the OSM data. We can use Python ElementTree to parse the data. We can also use UNIX "grep" comment to read the data. </p>
+</li>
+<li>
+<p><strong>Loading json data into MongoDB:</strong> </p>
+
+<p>I have a problem importing the json data into MongoDB using pymongo. I found it is faster and easier to import json data using "mongoimport", and query a collection in the mongo shell. </p>
+</li>
+<li>
+<p><strong>Data cleaning:</strong></p>
+
+<p>Several street names have no street types and also some other errors. The uncorrected and corrected street names are in the "changes" and "skip" dictionaries in this <a href="https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/OpenstreetMapData-SB.ipynb">document</a>. I manually changed these errors in "shape_element" function.  I also changed many similar street types to a non-abbreviated form after discovering these issues in the audit. The corrections are in this <a href="https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/OpenstreetMapData-SB.ipynb">document</a>. </p>
+
+<p>Additionally, I fount there are several inconsistent labeling elements of amenities when querying. For example, "Starbucks" vs "Starbucks Coffee" and "In-N-Out" vs "In-N-Out Burger". I corrected these inconsistent names using MongoDB, as following.</p>
+
+<pre><code>    db.sb.update({'name':"Starbucks"}, 
+        {"$set":{"name" : "Starbucks Coffee"}},{multi:true})
+</code></pre>
+
+<p>before:   { "_id" : "Starbucks Coffee", "count" : 6 }</p>
+
+<p>after:     { "_id" : "Starbucks Coffee", "count" : 15 }</p>
+</li>
+</ul>
+
+<h4>
+<a id="2-overview-of-the-data" class="anchor" href="#2-overview-of-the-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Overview of the data</h4>
+
+<ul>
+<li>
+<p>File sizes:</p>
+
+<pre><code>  OSM file is about 175 MB  
+  JSON file is about 198 MB
+</code></pre>
+</li>
+<li>
+<p>Datasize:</p>
+
+<pre><code>&gt; db.sb.dataSize()
+2066303408
+</code></pre>
+</li>
+<li>
+<p>Number of document:</p>
+
+<pre><code>&gt; db.sb.find().count()
+7424821
+</code></pre>
+</li>
+<li>
+<p>Number of node:</p>
+
+<pre><code>&gt; db.sb.find({"type":"node"}).count()
+7136237
+</code></pre>
+</li>
+<li>
+<p>Number of way:</p>
+
+<pre><code>&gt; db.sb.find({"type":"way"}).count()
+284368
+</code></pre>
+</li>
+<li>
+<p>Number of created users</p>
+
+<pre><code>&gt; db.sb.distinct("created.user").length
+438
+</code></pre>
+</li>
+<li>
+<p>Number of cafes</p>
+
+<pre><code>&gt; db.sb.find({"amenity":"cafe"}).count()
+350
+</code></pre>
+</li>
+<li>
+<p>Number of shops </p>
+
+<pre><code>&gt; db.sb.find({"shop":{$exists:1}}).count()
+2157
+</code></pre>
+</li>
+</ul>
+
+<h4>
+<a id="3-other-ideas-about-the-datasets" class="anchor" href="#3-other-ideas-about-the-datasets" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. Other ideas about the datasets</h4>
+
+<ul>
+<li>
+<p>The top 5 contributed users</p>
+
+<pre><code>&gt;db.sb.aggregate([
+        {'$match': {'created.user':{'$exists':1}}},
+        {'$group': {'_id':'$created.user',
+                    'count':{'$sum':1}}},
+        {'$sort': {'count':-1}},
+        {'$limit' : 5}])
+
+{ "_id" : "woodpeck_fixbot", "count" : 2694493 }
+{ "_id" : "nmixter", "count" : 837826 }
+{ "_id" : "Apo42", "count" : 542586 }
+{ "_id" : "Eureka gold", "count" : 347793 }
+{ "_id" : "USWilderness", "count" : 331834 }
+</code></pre>
+</li>
+<li>
+<p>The top 5 popular cuisines</p>
+
+<pre><code>&gt; db.sb.aggregate( [
+        {'$match': {'amenity':'restaurant',
+                    'cuisine':{'$exists':1}}},
+        {"$group":{"_id":"$cuisine", 
+                    "count":{"$sum":1}}},
+        {"$sort":{"count":-1}}, 
+        {"$limit":5}])
+
+{ "_id" : "american", "count" : 85 }
+{ "_id" : "mexican", "count" : 56 }
+{ "_id" : "pizza", "count" : 46 }
+{ "_id" : "seafood", "count" : 39 }
+{ "_id" : "burger", "count" : 37 }
+</code></pre>
+</li>
+<li>
+<p>The top 5 popular schools</p>
+
+<pre><code>&gt; db.sb.aggregate([
+        {"$match":{"amenity":"school",
+                   "name":{"$exists":1}}},
+        {"$group":{"_id":"$name", 
+                    "count":{"$sum":1}}},
+        {"$sort":{"count":-1}}, 
+        {"$limit":5}] )       
+
+{ "_id" : "Lemonwood Elementary", "count" : 32 }
+{ "_id" : "Isla Vista Elementary School", "count" : 22 }
+{ "_id" : "Oxnard High School", "count" : 16 }
+{ "_id" : "Santa Barbara College", "count" : 16 }
+{ "_id" : "Wilson School", "count" : 16 }
+
+</code></pre>
+</li>
+<li>
+<p>The top 5 appearing amenities</p>
+
+<pre><code>&gt; db.sb.aggregate([
+        {"$match":{"amenity":{"$exists":1}}}, 
+        {"$group": {"_id":"$amenity",
+                    "count":{"$sum":1}}}, 
+        {"$sort":{"count":-1}}, 
+        {"$limit":5}])
+
+{ "_id" : "parking", "count" : 3071 }
+{ "_id" : "school", "count" : 2507 }
+{ "_id" : "place_of_worship", "count" : 2459 }
+{ "_id" : "restaurant", "count" : 856 }
+{ "_id" : "telephone", "count" : 760 }
+
+</code></pre>
+</li>
+<li>
+<p>The top 5 popular fast food</p>
+
+<pre><code>&gt; db.sb.aggregate([
+    {'$match': {'amenity':'fast_food',
+                'name':{'$exists':1}}},
+    {"$group":{"_id":"$name", 
+                "count":{"$sum":1}}},
+    {"$sort":{"count":-1}}, 
+    {"$limit":5}])
+
+{ "_id" : "McDonald's", "count" : 70 }
+{ "_id" : "Subway", "count" : 56 }
+{ "_id" : "Panda Express", "count" : 39 }
+{ "_id" : "Wendy's", "count" : 31 }
+{ "_id" : "Jack in the Box", "count" : 24 }
+</code></pre>
+</li>
+<li>
+<p><strong>Other Idea:</strong></p>
+
+<p><strong><em>1. The most  populated district in Santa Barbara County</em></strong></p>
+
+<p>I want to know the most populated district in Santa Barbara County, so I did the following MongoDB query based on postcode.</p>
+
+<pre><code>  &gt; db.sb.aggregate( [
+      { '$match' : { 'address.postcode' : {'$exists' : 1}}},
+      { '$project' : {'postcode' : 
+                      { '$substr' : ['$address.postcode', 0, 5]}}}, 
+      { '$group' : {'_id' : '$postcode',  
+                   'count' : { '$sum' : 1 }}}, 
+      { '$sort' : {'count' : -1}},
+                  { '$limit' : 5} ] )
+
+  { "_id" : "93117", "count" : 545 }
+{ "_id" : "93436", "count" : 428 }
+{ "_id" : "93101", "count" : 333 }
+{ "_id" : "93001", "count" : 207 }
+{ "_id" : "93033", "count" : 109 }
+</code></pre>
+
+<p>The most populated district is 93117, which is Goleta city. I live in this area.</p>
+
+<p><strong><em>2. Wheelchair accessible amenities in Santa Barbara County.</em></strong></p>
+
+<p>I want to know which amenities are wheelchair accessible.</p>
+
+<pre><code>&gt; db.sb.aggregate([
+    { '$match' :{'amenity' : {'$exists' : 1},
+                 'wheelchair' : 'yes'}},  
+    { '$group' : { '_id' :  '$amenity' ,                         
+                   'count' : { '$sum' : 1 }}}, 
+    { '$sort' : {'count' : -1}},
+    {'$limit' : 5}])
+
+{ "_id" : "fast_food", "count" : 24 }
+{ "_id" : "toilets", "count" : 16 }
+{ "_id" : "fuel", "count" : 16 }
+{ "_id" : "hospital", "count" : 16 }
+{ "_id" : "restaurant", "count" : 8 }
+
+</code></pre>
+
+<p>Fast food is the most wheelchair accessible amenity in Santa Barbara. Next, we can find out which fast food provides wheelchair service.</p>
+
+<pre><code>&gt; db.sb.aggregate([
+    { '$match' :{'amenity' : 'fast_food',
+                 'wheelchair' : 'yes'}},  
+    { '$group' : { '_id' :  '$name' ,                         
+                   'count' : { '$sum' : 1 }}}, 
+    { '$sort' : {'count' : -1}},
+    {'$limit' : 5}]) 
+
+{ "_id" : "In-N-Out Burger", "count" : 16 }
+{ "_id" : "McDonald's", "count" : 8 }
+</code></pre>
+
+<p>Interestingly, only two fast food restaurants provide wheelchair service in Santa Barbara.</p>
+
+<p><strong><em>3. Find the closest hospital from my current location</em></strong></p>
+
+<p>The greatest benefits of OSM data is for disaster preparedness and risk management. For example, OSM can help facilitate the delivery of goods and services in the Nepal earthquake disaster.  A recent <a href="http://abc7.com/weather/simulation-shows-fallout-of-77-magnitude-quake-in-socal/684418/">study</a> suggests that Southern California may have a 7.7 magnitude earthquake in future, so we have to prepare.</p>
+
+<p>In this regard, I used OSM to find the closest hospital from my current location in Santa Barbara area. The code can be find here (<a href="http://nbviewer.ipython.org/github/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/FindHospital.ipynb">ipynb</a>, <a href="FindHospital.html">html</a>). </p>
+</li>
+</ul>
+
+<h3>
+<a id="conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion:</h3>
+
+<p>There are still many opportunities to clean and validate the OSM data in which I did not explore. It would be very helpful if we could update, validate, and/or pull missing information of the OSM data from other sources, such as Google Maps API. </p>
+
+<h3>
+<a id="reference" class="anchor" href="#reference" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reference:</h3>
+
+<ol>
+<li><a href="https://docs.mongodb.org/manual/">https://docs.mongodb.org/manual/</a></li>
+<li><a href="https://github.com/geopy/geopy">https://github.com/geopy/geopy</a></li>
+<li><a href="http://wiki.openstreetmap.org/wiki/2015_Nepal_earthquake">http://wiki.openstreetmap.org/wiki/2015_Nepal_earthquake</a></li>
+</ol>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/cyuancheng/Data-Wrangle-Openstreetmaps-Data">Analyzing OpenStreetMap Data with MongoDB</a> is maintained by <a href="https://github.com/cyuancheng">cyuancheng</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>

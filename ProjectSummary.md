@@ -245,7 +245,9 @@ Interestingly, only two fast food restaurants provide wheelchair service in Sant
 	
 	The greatest benefits of OSM data is for disaster preparedness and risk management. For example, OSM can help facilitate the delivery of goods and services in the Nepal earthquake disaster.  A recent [study](http://abc7.com/weather/simulation-shows-fallout-of-77-magnitude-quake-in-socal/684418/) suggests that Southern California may have a 7.7 magnitude earthquake in future, so we have to prepare.
 	
-	In this regard, I used OSM to find the closest hospital from my current location in Santa Barbara area. The code can be find here ([ipynb] (http://nbviewer.ipython.org/github/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/FindHospital.ipynb), [html] (FindHospital.html)). 
+	In this regard, I used OSM to find the closest hospital from my current location in Santa Barbara area. The code can be find here ([ipynb] (http://nbviewer.ipython.org/github/cyuancheng/Data-Wrangle-Openstreetmaps-Data/blob/master/FindHospital.ipynb)). The map for hospitals are shown below (blue bubble: current position, red bubble: hospital).  
+
+![Alt text](cover_map.png )
 	
 
 ###Conclusion: 

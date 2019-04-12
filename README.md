@@ -1,5 +1,5 @@
 ## Analyzing OpenStreetMap Data | Data Wrangling with MongoDB
-- Author:  Chi-Yuan Cheng (cyuancheng AT gmail DOT com) 
+- Author:  Chiyuan Cheng (cyuancheng AT gmail DOT com) 
 - Last updated: May 1h  2015
 
 ### Information

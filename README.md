@@ -1,4 +1,4 @@
-##Analyzing OpenStreetMap Data | Data Wrangling with MongoDB
+## Analyzing OpenStreetMap Data | Data Wrangling with MongoDB
 - Author:  Chi-Yuan Cheng (cyuancheng AT gmail DOT com) 
 - Last updated: May 1h  2015
 
@@ -18,7 +18,7 @@ The interesting findings of OSM data in Santa Barbara were listed below:
 6. The top amenity for wheelchair accessible: fast_food (In-N-Out Burger)
 7. Number of hospital or clinic in SB area: 18 
 
-###Files
+### Files
 
 - **Project summary** ([md](ProjectSummary.md), [html](http://cyuancheng.github.io/Data-Wrangle-Openstreetmaps-Data/) )    
   includes answers to questions, MongoDB queries and reference materials

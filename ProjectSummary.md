@@ -1,17 +1,17 @@
-##Project 2: Analyzing OpenStreetMap Data | Data Wrangling with MongoDB
+## Project 2: Analyzing OpenStreetMap Data | Data Wrangling with MongoDB
 - Author:  Chi-Yuan Cheng (cyuancheng AT gmail DOT com) 
 - Last updated: May 1th  2015
 
-###Map information:
+### Map information:
 
 - Map Area: Santa Barbara County, CA, United States
 - The dataset can be found [here] (https://s3.amazonaws.com/metro-extracts.mapzen.com/santa-barbara_california.osm.bz2) 
 - I choose Santa Barbara, CA because I have lived and worked there for 6 years.
 
 
-###Questions:
+### Questions:
 
-####1. Problems encountered in your map
+#### 1. Problems encountered in your map
 
 - **Obtaining the OSM data:**
 
@@ -37,7 +37,7 @@
 
 	 after:     { "_id" : "Starbucks Coffee", "count" : 15 }
 
-####2. Overview of the data
+#### 2. Overview of the data
 
 - File sizes:
   
@@ -250,11 +250,11 @@ Interestingly, only two fast food restaurants provide wheelchair service in Sant
 ![Alt text](cover_map.png )
 	
 
-###Conclusion: 
+### Conclusion: 
 
 There are still many opportunities to clean and validate the OSM data in which I did not explore. It would be very helpful if we could update, validate, and/or pull missing information of the OSM data from other sources, such as Google Maps API. 
 
-###Reference:
+### Reference:
 1. https://docs.mongodb.org/manual/
 2. https://github.com/geopy/geopy
 3. http://wiki.openstreetmap.org/wiki/2015_Nepal_earthquake
